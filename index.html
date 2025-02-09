@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Whack Amir Hossein!</title>
+  <link href='https://fonts.googleapis.com/css?family=Amatic+SC:400,700' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="https://fav.farm/🔥" />
+</head>
+<body>
+
+  <div class="exp">
+    <p>خب به بازی "بزن تو سر امیر حسین" خوش اومدی! بازی ساده ست, فقط باید دکمه "شروع" رو بزنی بعد امیر حسین رو میبینی که خیلی سریع از سوراخا میاد بیرون و تو باید سریع بزنی تو سرش قبل اینکه فرار کنه. هر بار که بتونی بزنیش یه امتیاز به امتیازاتت اضافه میشه. امیر حسین رو دست کم نگیر اون خیلی سریعه و خیلیم شااخه. حالا دکمه "باش" بزن تا بری تو صفحه بازی. موفق باشی!</p>
+    <button class="toggle-exp" onclick="removeExp()">باش</button>
+  </div>
+
+  <h1>Whack Amir Hossein<span class="score">0</span></h1>
+
+  <div class="game">
+    <div class="hole hole1">
+      <div class="mole"></div>
+    </div>
+    <div class="hole hole2">
+      <div class="mole"></div>
+    </div>
+    <div class="hole hole3">
+      <div class="mole"></div>
+    </div>
+    <div class="hole hole4">
+      <div class="mole"></div>
+    </div>
+    <div class="hole hole5">
+      <div class="mole"></div>
+    </div>
+    <div class="hole hole6">
+      <div class="mole"></div>
+    </div>
+  </div>
+
+  <button class="startGame" onClick="startGame()">Start!</button>
+  <audio class="shakh" src="shakh1.mp3"></audio>
+  <audio class="shakh2" src="shakh2(2).mp3"></audio>
+
+<script>
+  const holes = document.querySelectorAll('.hole');
+  const scoreBoard = document.querySelector('.score');
+  const moles = document.querySelectorAll('.mole');
+  const explanation = document.querySelector('.exp');
+  const paragraph = document.querySelector('.exp p');
+  const toggleButton = document.querySelector('.toggle-exp');
+  const shakhAu = document.querySelectorAll('audio');
+  
+  function removeExp () {
+    explanation.style.display = 'none';
+  }
+
+
+  let lastHole;
+  let timeUp = false;
+  let score;
+
+  function randomTime(min, max) {
+    return Math.round(Math.random() * (max - min) + min);
+  }
+
+  function randomHole(holes) {
+    const index = Math.floor(Math.random() * holes.length);
+    const hole = holes[index];
+    
+    if (lastHole === hole) {
+      return randomHole(holes);
+    };
+
+    lastHole = hole;
+
+    return hole;
+  }
+
+  function randomVoice() {
+    const random = Math.floor(Math.random() * 2);
+    return random;
+  }
+
+  function peep() {
+    const time = randomTime(200, 1000);
+    const hole = randomHole(holes);
+
+    hole.classList.add('up');
+    shakhAu[randomVoice()].play();
+    
+    setTimeout(() => {
+      hole.classList.remove('up');
+      if (!timeUp) peep();
+    }, time)
+  }
+
+  function endRes() {
+    timeUp = true;
+    if (timeUp) {
+      explanation.style.display = 'flex'
+      paragraph.innerText = `بازی تموم شد. امتیاز نهاییت ${score} شد.`;
+    }
+  }
+
+  function startGame() {
+    scoreBoard.textContent = 0;
+    timeUp = false;
+    score = 0;
+    peep();
+
+    setTimeout(endRes, 10000);
+  }
+
+  function bonk(e) {
+    if (!e.isTrusted) return;
+
+    score++;
+    this.parentNode.classList.remove('up');
+    scoreBoard.textContent = score;
+  }
+
+  moles.forEach(mole => mole.addEventListener('click', bonk));
+
+</script>
+</body>
+</html>
